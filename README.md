@@ -14,11 +14,11 @@ Usage
 
 To create the image `tutum/mariadb`, execute the following command on the tutum-docker-mariadb folder:
 
-        docker build -t tutum/mariadb .
+        docker build -t combro2k/mariadb .
 
 To run the image and bind to port 3306:
 
-        docker run -d -p 3306:3306 tutum/mariadb
+        docker run -d -p 3306:3306 combro2k/mariadb
 
 The first time that you run your container, a new user `admin` with all privileges 
 will be created in MariaDB with a random password. To get the password, check the logs
@@ -49,7 +49,7 @@ Setting a specific password for the admin account
 If you want to use a preset password instead of a random generated one, you can
 set the environment variable `MARIADB_PASS` to your specific password when running the container:
 
-        docker run -d -p 3306:3306 -e MARIADB_PASS="mypass" tutum/mariadb
+        docker run -d -p 3306:3306 -e MARIADB_PASS="mypass" combro2k/mariadb
 
 
 Mounting the database file volume from other containers
@@ -65,4 +65,4 @@ You can specify any name of the container by using `--name` option, which will b
 
 After this you can start your MariaDB image using volumes in the container created above (put the name of container in `--volumes-from`)
 
-    docker run -d --volumes-from db_vol -p 3306:3306 tutum/mariadb 
+    docker run -d --volumes-from db_vol -p 3306:3306 combro2k/mariadb 
