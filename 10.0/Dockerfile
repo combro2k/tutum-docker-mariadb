@@ -1,10 +1,10 @@
-FROM ubuntu:trusty
-MAINTAINER FENG, HONGLIN <hfeng@tutum.co>
+FROM ubuntu:14.04
+MAINTAINER Martijn van Maurik <docker@vmaurik.nl>
 
 RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db && \
     echo 'deb http://mirrors.syringanetworks.net/mariadb/repo/10.0/ubuntu trusty main' >> /etc/apt/sources.list && \
     echo 'deb-src http://mirrors.syringanetworks.net/mariadb/repo/10.0/ubuntu trusty main' >> /etc/apt/sources.list && \
-    apt-get update && \
+    apt-get update && apt-get dist-upgrade -yq && \
     apt-get install -y mariadb-server pwgen && \
     rm -rf /var/lib/mysql/* && \
     apt-get clean && \
