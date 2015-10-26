@@ -1,27 +1,21 @@
-FROM ubuntu-debootstrap:14.04
+FROM combro2k/debian-debootstrap:8
 MAINTAINER Martijn van Maurik <docker@vmaurik.nl>
 
-RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db && \
-    echo 'deb http://mirrors.syringanetworks.net/mariadb/repo/10.0/ubuntu trusty main' >> /etc/apt/sources.list && \
-    echo 'deb-src http://mirrors.syringanetworks.net/mariadb/repo/10.0/ubuntu trusty main' >> /etc/apt/sources.list && \
-    apt-get update && apt-get dist-upgrade -yq && \
-    apt-get install -y mariadb-server pwgen && \
-    rm -rf /var/lib/mysql/* && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Environment variables
+ENV HOME=/root \
+    INSTALL_LOG=/var/log/build.log \
+    MARIA_DB_VERSION=10.0
 
-#change bind address to 0.0.0.0
-RUN sed -i -r 's/bind-address.*$/bind-address = 0.0.0.0/' /etc/mysql/my.cnf
+# Add first the scripts to the container
+ADD resources/bin/ /usr/local/bin/
 
-ADD create_mariadb_admin_user.sh /create_mariadb_admin_user.sh
-ADD run.sh /run.sh
-RUN chmod 775 /*.sh
+RUN chmod +x /usr/local/bin/* && touch ${INSTALL_LOG} && /bin/bash -l -c '/usr/local/bin/setup.sh build'
+
+# Run the last bits and clean up
+RUN /bin/bash -l -c 'bash /usr/local/bin/setup.sh post_install' | tee -a ${INSTALL_LOG} > /dev/null 2>&1 || exit 1
 
 # Add VOLUMEs to allow backup of config and databases
 VOLUME  ["/etc/mysql", "/var/lib/mysql"]
 
-#Added to avoid in container connection to the database with mysql client error message "TERM environment variable not set"
-ENV TERM dumb
-
 EXPOSE 3306
-CMD ["/run.sh"]
+CMD ["/usr/local/bin/run"]
