@@ -12,4 +12,4 @@ else
     echo "=> Using an existing volume of MariaDB"
 fi
 
-exec mysqld_safe
+exec start-stop-daemon --start --pidfile /var/run/mysqld/mysqld.pid --exec /usr/bin/mysqld_safe
